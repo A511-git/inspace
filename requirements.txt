@@ -1,0 +1,52 @@
+# Core PyTorch (CUDA 12.4)
+# Run: pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0
+torchvision==0.21.0
+
+# Numerical, Data & Utilities
+numpy
+scipy
+pandas
+tqdm
+easydict
+zstandard
+safetensors
+huggingface_hub
+ninja
+
+# 2D / 3D Vision, Geometry & Rendering
+opencv-python-headless
+imageio
+imageio-ffmpeg
+Pillow
+scikit-image
+trimesh
+plyfile
+open3d
+pyrender
+py360convert
+kornia
+timm
+matplotlib
+plotly
+
+# 3D Utilities
+utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
+
+# ML, Deep Learning & Evaluation
+transformers
+tensorboard
+lpips
+
+# Web UI
+gradio>=5.0.0,<=6.0.1
+
+# Attention Backend for Turing / Kaggle T4 / V100:
+# pip install xformers --index-url https://download.pytorch.org/whl/cu124
+
+# Pre-compiled CUDA Extensions for Python 3.10 Linux x86_64 (Kaggle / Colab / Ubuntu):
+o_voxel @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
+cumesh @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
+flex_gemm @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/flex_gemm-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
+nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0
+nvdiffrec @ git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils
