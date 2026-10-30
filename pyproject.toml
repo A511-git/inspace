@@ -140,6 +140,14 @@ flex_gemm = { git = "https://github.com/JeffreyXiang/FlexGEMM.git" }
 nvdiffrast = { git = "https://github.com/NVlabs/nvdiffrast.git", tag = "v0.4.0" }
 nvdiffrec = { git = "https://github.com/JeffreyXiang/nvdiffrec.git", branch = "renderutils" }
 
+# Provide torch and setuptools during isolated building of custom CUDA extensions
+[tool.uv.extra-build-dependencies]
+cumesh = ["torch", "setuptools"]
+flex_gemm = ["torch", "setuptools"]
+nvdiffrast = ["torch", "setuptools"]
+nvdiffrec = ["torch", "setuptools"]
+o_voxel = ["torch", "setuptools"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["trellis2*", "demo*", "data_toolkit*", "eval*"]
