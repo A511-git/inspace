@@ -28,7 +28,11 @@ from tqdm import tqdm
 # Defaults to GPU 1; override from the shell, e.g.
 #   CUDA_VISIBLE_DEVICES=0 python demo/app_inspace_custom.py
 if 'CUDA_VISIBLE_DEVICES' not in os.environ:
-    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+if 'ATTN_BACKEND' not in os.environ:
+    os.environ['ATTN_BACKEND'] = 'xformers'
+if 'SPARSE_ATTN_BACKEND' not in os.environ:
+    os.environ['SPARSE_ATTN_BACKEND'] = 'xformers'
 
 print(f"[DEBUG] CUDA_VISIBLE_DEVICES = {os.environ.get('CUDA_VISIBLE_DEVICES', 'not set')}")
 
@@ -108,6 +112,9 @@ def discover_erp_front_samples(data_dir):
     """Discover all ERP_3D_FRONT samples.
     Returns dict: {(uuid, room_name): [view_indices]}
     """
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir, exist_ok=True)
+        return {}
     samples = {}
     for uuid in sorted(os.listdir(data_dir)):
         uuid_dir = os.path.join(data_dir, uuid)
@@ -534,6 +541,7 @@ def _load_erp_depth(depth_file, target_hw):
             depth = arr.astype(np.float32)
             if arr.dtype == np.uint16:  # 16-bit depth stored in millimetres
                 depth /= 1000.0
+        depth = np.squeeze(depth)
         if depth.ndim != 2:
             raise ValueError(f"expected a 2D depth array, got shape {depth.shape}")
         H, W = target_hw

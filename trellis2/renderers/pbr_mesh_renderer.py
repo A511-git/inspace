@@ -46,7 +46,14 @@ class EnvMap:
     def _backend(self):
         if not hasattr(self, '_nvdiffrec_envlight'):
             if 'EnvironmentLight' not in globals():
-                from nvdiffrec_render.light import EnvironmentLight
+                try:
+                    from nvdiffrec_render.light import EnvironmentLight
+                except ImportError:
+                    raise ImportError(
+                        "nvdiffrec_render is required for EnvMap split-sum shading. "
+                        "Compile it with: ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/x86_64-linux-gnu/libcuda.so && "
+                        "uv pip install git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils --no-build-isolation"
+                    )
             cubemap = latlong_to_cubemap(self.image, [512, 512])
             self._nvdiffrec_envlight = EnvironmentLight(cubemap)
             self._nvdiffrec_envlight.build_mips()
