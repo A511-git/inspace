@@ -44,9 +44,9 @@ gradio>=5.0.0,<=6.0.1
 # Attention Backend for Turing / Kaggle T4 / V100:
 # pip install xformers --index-url https://download.pytorch.org/whl/cu124
 
-# Pre-compiled CUDA Extensions for Python 3.10 Linux x86_64 (Kaggle / Colab / Ubuntu):
-o_voxel @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
-cumesh @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
-flex_gemm @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/flex_gemm-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'
-nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0
-nvdiffrec @ git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils
+# CUDA Extensions (Local o-voxel + GitHub repositories, no HF token required)
+./o-voxel
+git+https://github.com/JeffreyXiang/CuMesh.git
+git+https://github.com/JeffreyXiang/FlexGEMM.git
+git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0
+git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils

@@ -60,22 +60,14 @@ infer = [
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
 ]
 
-# Pre-compiled CUDA wheels for Python 3.10 Linux x86_64 (Kaggle / Colab)
-# Instant install without compiling from source: uv sync -E infer -E cuda-wheels
-cuda-wheels = [
-    "o_voxel @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "cumesh @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "flex_gemm @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/flex_gemm-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0",
-    "nvdiffrec @ git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils",
-]
-
-# Build CUDA extensions from source (fallback for custom architectures):
-cuda-build = [
-    "cumesh @ git+https://github.com/JeffreyXiang/CuMesh.git",
-    "flex_gemm @ git+https://github.com/JeffreyXiang/FlexGEMM.git",
-    "nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0",
-    "nvdiffrec @ git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils",
+# CUDA extensions (o-voxel from local folder, others from GitHub, no HF token needed)
+# Install via: uv sync -E infer -E cuda-extensions
+cuda-extensions = [
+    "o_voxel",
+    "cumesh",
+    "flex_gemm",
+    "nvdiffrast",
+    "nvdiffrec",
 ]
 
 # Attention backend for Turing / Kaggle T4 / V100: uv sync -E infer -E xformers
@@ -99,7 +91,7 @@ eval = [
     "pytorch3d @ git+https://github.com/facebookresearch/pytorch3d.git@stable",
 ]
 
-# PEP 735 Dependency Groups (uv sync --group infer --group cuda-wheels)
+# PEP 735 Dependency Groups (uv sync --group infer --group cuda-extensions)
 [dependency-groups]
 infer = [
     "opencv-python-headless",
@@ -120,12 +112,12 @@ infer = [
     "gradio>=5.0.0,<=6.0.1",
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
 ]
-cuda-wheels = [
-    "o_voxel @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "cumesh @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "flex_gemm @ https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/flex_gemm-0.0.1-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
-    "nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0",
-    "nvdiffrec @ git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils",
+cuda-extensions = [
+    "o_voxel",
+    "cumesh",
+    "flex_gemm",
+    "nvdiffrast",
+    "nvdiffrec",
 ]
 dev = [
     "tensorboard",
@@ -142,9 +134,9 @@ explicit = true
 torch = { index = "pytorch-cu124" }
 torchvision = { index = "pytorch-cu124" }
 xformers = { index = "pytorch-cu124" }
-o_voxel = { url = "https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl" }
-cumesh = { url = "https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl" }
-flex_gemm = { url = "https://huggingface.co/microsoft/TRELLIS.2/resolve/main/wheels/flex_gemm-0.0.1-cp310-cp310-linux_x86_64.whl" }
+o_voxel = { path = "./o-voxel" }
+cumesh = { git = "https://github.com/JeffreyXiang/CuMesh.git" }
+flex_gemm = { git = "https://github.com/JeffreyXiang/FlexGEMM.git" }
 nvdiffrast = { git = "https://github.com/NVlabs/nvdiffrast.git", tag = "v0.4.0" }
 nvdiffrec = { git = "https://github.com/JeffreyXiang/nvdiffrec.git", branch = "renderutils" }
 
