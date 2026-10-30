@@ -20,7 +20,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
 ]
 
 # All dependencies auto-installed by: uv sync --python 3.10
@@ -61,25 +60,20 @@ dependencies = [
     "transformers",
     "gradio>=5.0.0,<=6.0.1",
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
+    "lpips",
 
     # Precompiled CUDA Wheels (from PozzettiAndrea/cuda-wheels)
-    "cumesh==0.0.1+cu124torch26",
-    "flex-gemm==1.0.0+cu124torch26",
-    "nvdiffrast==0.4.0+cu124torch26",
-    "nvdiffrec-render==0.0.1+cu124torch26",
-    "o-voxel==0.0.1+cu124torch26",
+    # Unpinned from local version '+cu124torch26' to allow PEP 440 resolver matching
+    "cumesh",
+    "flex-gemm",
+    "nvdiffrast",
+    "nvdiffrec-render",
+    "o-voxel",
 ]
 
 [project.optional-dependencies]
-# Optional Ampere/Hopper backend (for A100 / RTX 3090/4090):
-flash-attn = [
-    "flash-attn==2.7.3",
-]
 train = [
     "tensorboard",
-]
-eval = [
-    "lpips",
 ]
 
 # PyTorch CUDA 12.4 index

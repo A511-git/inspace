@@ -38,13 +38,14 @@ matplotlib
 plotly
 transformers
 gradio>=5.0.0,<=6.0.1
+lpips
 
 # 3D Utilities
 utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 
 # Pre-compiled CUDA extensions
-cumesh==0.0.1+cu124torch26
-flex-gemm==1.0.0+cu124torch26
-nvdiffrast==0.4.0+cu124torch26
-nvdiffrec-render==0.0.1+cu124torch26
-o-voxel==0.0.1+cu124torch26
+cumesh
+flex-gemm
+nvdiffrast
+nvdiffrec-render
+o-voxel
