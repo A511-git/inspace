@@ -63,11 +63,9 @@ dependencies = [
     "lpips",
 
     # Precompiled CUDA Wheels (from PozzettiAndrea/cuda-wheels)
-    # Unpinned from local version '+cu124torch26' to allow PEP 440 resolver matching
     "cumesh",
     "flex-gemm",
     "nvdiffrast",
-    "nvdiffrec-render",
     "o-voxel",
 ]
 
@@ -95,7 +93,6 @@ xformers = { index = "pytorch-cu124" }
 cumesh = { index = "cuda-wheels" }
 flex-gemm = { index = "cuda-wheels" }
 nvdiffrast = { index = "cuda-wheels" }
-nvdiffrec-render = { index = "cuda-wheels" }
 o-voxel = { index = "cuda-wheels" }
 
 [tool.setuptools.packages.find]

@@ -43,9 +43,8 @@ lpips
 # 3D Utilities
 utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 
-# Pre-compiled CUDA extensions
+# Pre-compiled CUDA extensions for Linux
 cumesh
 flex-gemm
 nvdiffrast
-nvdiffrec-render
 o-voxel
