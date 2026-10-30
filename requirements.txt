@@ -1,7 +1,12 @@
-# Core PyTorch (CUDA 12.4)
-# Run: pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+# PyTorch CUDA 12.4 + PozzettiAndrea CUDA Wheels + PyPI
+--index-url https://download.pytorch.org/whl/cu124
+--extra-index-url https://pozzettiandrea.github.io/cuda-wheels/
+--extra-index-url https://pypi.org/simple
+
+# Core PyTorch stack
 torch==2.6.0
 torchvision==0.21.0
+xformers
 
 # Build tools & numerical utilities
 setuptools>=64
@@ -31,16 +36,13 @@ kornia
 timm
 matplotlib
 plotly
+transformers
+gradio>=5.0.0,<=6.0.1
 
 # 3D Utilities
 utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 
-# ML, Deep Learning & Web UI
-transformers
-gradio>=5.0.0,<=6.0.1
-
-# Pre-compiled CUDA extensions (from https://pozzettiandrea.github.io/cuda-wheels/)
---extra-index-url https://pozzettiandrea.github.io/cuda-wheels/
+# Pre-compiled CUDA extensions
 cumesh==0.0.1+cu124torch26
 flex-gemm==1.0.0+cu124torch26
 nvdiffrast==0.4.0+cu124torch26

@@ -7,7 +7,7 @@ name = "inspace"
 version = "0.1.0"
 description = "InSpace: Structure-Aware 3D Indoor Scene Generation from a Single 360° Image"
 readme = "README.md"
-requires-python = ">=3.10, <3.13"
+requires-python = "==3.10.*"
 license = { text = "MIT" }
 authors = [
     { name = "Gwanhyeong Koo", email = "kookie12@kaist.ac.kr" },
@@ -23,10 +23,14 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 
-# Core runtime + build tools
+# All dependencies auto-installed by: uv sync --python 3.10
 dependencies = [
+    # PyTorch stack + attention (CUDA 12.4)
     "torch==2.6.0",
     "torchvision==0.21.0",
+    "xformers",
+
+    # Build tools & numerical core
     "setuptools>=64",
     "wheel",
     "ninja",
@@ -38,11 +42,8 @@ dependencies = [
     "zstandard",
     "safetensors",
     "huggingface_hub",
-]
 
-[project.optional-dependencies]
-# Minimal inference & Gradio demo: uv sync --extra infer (or uv sync -E infer)
-infer = [
+    # 2D & 3D Vision, Geometry & Rendering
     "opencv-python-headless",
     "imageio",
     "imageio-ffmpeg",
@@ -60,11 +61,8 @@ infer = [
     "transformers",
     "gradio>=5.0.0,<=6.0.1",
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
-]
 
-# Pre-compiled CUDA wheels for cu124 + torch2.6 + Python 3.10
-# (from https://pozzettiandrea.github.io/cuda-wheels/)
-cuda-wheels = [
+    # Precompiled CUDA Wheels (from PozzettiAndrea/cuda-wheels)
     "cumesh==0.0.1+cu124torch26",
     "flex-gemm==1.0.0+cu124torch26",
     "nvdiffrast==0.4.0+cu124torch26",
@@ -72,28 +70,17 @@ cuda-wheels = [
     "o-voxel==0.0.1+cu124torch26",
 ]
 
-# Attention backend for Turing / Kaggle T4 / V100: uv sync -E infer -E xformers
-xformers = [
-    "xformers",
-]
-
-# Attention backend for Ampere / Hopper (A100, RTX 3090/4090): uv sync -E infer -E flash-attn
+[project.optional-dependencies]
+# Optional Ampere/Hopper backend (for A100 / RTX 3090/4090):
 flash-attn = [
     "flash-attn==2.7.3",
 ]
-
-# Training dependencies
 train = [
     "tensorboard",
 ]
-
-# Benchmark evaluation metrics
 eval = [
     "lpips",
 ]
-
-[tool.uv]
-default-groups = ["infer"]
 
 # PyTorch CUDA 12.4 index
 [[tool.uv.index]]
@@ -101,7 +88,7 @@ name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
 explicit = true
 
-# Precompiled CUDA Wheels index (PozzettiAndrea)
+# PozzettiAndrea precompiled CUDA wheels index
 [[tool.uv.index]]
 name = "cuda-wheels"
 url = "https://pozzettiandrea.github.io/cuda-wheels/"
