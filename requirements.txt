@@ -3,7 +3,10 @@
 torch==2.6.0
 torchvision==0.21.0
 
-# Numerical, Data & Utilities
+# Build tools & numerical utilities
+setuptools>=64
+wheel
+ninja
 numpy
 scipy
 pandas
@@ -12,7 +15,6 @@ easydict
 zstandard
 safetensors
 huggingface_hub
-ninja
 
 # 2D / 3D Vision, Geometry & Rendering
 opencv-python-headless
@@ -33,20 +35,14 @@ plotly
 # 3D Utilities
 utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 
-# ML, Deep Learning & Evaluation
+# ML, Deep Learning & Web UI
 transformers
-tensorboard
-lpips
-
-# Web UI
 gradio>=5.0.0,<=6.0.1
 
-# Attention Backend for Turing / Kaggle T4 / V100:
-# pip install xformers --index-url https://download.pytorch.org/whl/cu124
-
-# CUDA Extensions (Local o-voxel + GitHub repositories, no HF token required)
-./o-voxel
-git+https://github.com/JeffreyXiang/CuMesh.git
-git+https://github.com/JeffreyXiang/FlexGEMM.git
-git+https://github.com/NVlabs/nvdiffrast.git@v0.4.0
-git+https://github.com/JeffreyXiang/nvdiffrec.git@renderutils
+# Pre-compiled CUDA extensions (from https://pozzettiandrea.github.io/cuda-wheels/)
+--extra-index-url https://pozzettiandrea.github.io/cuda-wheels/
+cumesh==0.0.1+cu124torch26
+flex-gemm==1.0.0+cu124torch26
+nvdiffrast==0.4.0+cu124torch26
+nvdiffrec-render==0.0.1+cu124torch26
+o-voxel==0.0.1+cu124torch26

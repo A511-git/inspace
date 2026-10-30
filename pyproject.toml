@@ -62,6 +62,16 @@ infer = [
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
 ]
 
+# Pre-compiled CUDA wheels for cu124 + torch2.6 + Python 3.10
+# (from https://pozzettiandrea.github.io/cuda-wheels/)
+cuda-wheels = [
+    "cumesh==0.0.1+cu124torch26",
+    "flex-gemm==1.0.0+cu124torch26",
+    "nvdiffrast==0.4.0+cu124torch26",
+    "nvdiffrec-render==0.0.1+cu124torch26",
+    "o-voxel==0.0.1+cu124torch26",
+]
+
 # Attention backend for Turing / Kaggle T4 / V100: uv sync -E infer -E xformers
 xformers = [
     "xformers",
@@ -85,16 +95,27 @@ eval = [
 [tool.uv]
 default-groups = ["infer"]
 
-# uv-specific configuration: auto-fetch PyTorch CUDA 12.4 wheels instead of CPU-only PyPI
+# PyTorch CUDA 12.4 index
 [[tool.uv.index]]
 name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+# Precompiled CUDA Wheels index (PozzettiAndrea)
+[[tool.uv.index]]
+name = "cuda-wheels"
+url = "https://pozzettiandrea.github.io/cuda-wheels/"
 explicit = true
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu124" }
 torchvision = { index = "pytorch-cu124" }
 xformers = { index = "pytorch-cu124" }
+cumesh = { index = "cuda-wheels" }
+flex-gemm = { index = "cuda-wheels" }
+nvdiffrast = { index = "cuda-wheels" }
+nvdiffrec-render = { index = "cuda-wheels" }
+o-voxel = { index = "cuda-wheels" }
 
 [tool.setuptools.packages.find]
 where = ["."]
