@@ -23,10 +23,13 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 
-# Minimal base dependencies
+# Core runtime + build tools
 dependencies = [
     "torch==2.6.0",
     "torchvision==0.21.0",
+    "setuptools>=64",
+    "wheel",
+    "ninja",
     "numpy",
     "scipy",
     "pandas",
@@ -35,7 +38,6 @@ dependencies = [
     "zstandard",
     "safetensors",
     "huggingface_hub",
-    "ninja",
 ]
 
 [project.optional-dependencies]
@@ -60,16 +62,6 @@ infer = [
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
 ]
 
-# CUDA extensions (o-voxel from local folder, others from GitHub, no HF token needed)
-# Install via: uv sync -E infer -E cuda-extensions
-cuda-extensions = [
-    "o_voxel",
-    "cumesh",
-    "flex_gemm",
-    "nvdiffrast",
-    "nvdiffrec",
-]
-
 # Attention backend for Turing / Kaggle T4 / V100: uv sync -E infer -E xformers
 xformers = [
     "xformers",
@@ -85,44 +77,13 @@ train = [
     "tensorboard",
 ]
 
-# Benchmark evaluation metrics & scripts
+# Benchmark evaluation metrics
 eval = [
     "lpips",
-    "pytorch3d @ git+https://github.com/facebookresearch/pytorch3d.git@stable",
 ]
 
-# PEP 735 Dependency Groups (uv sync --group infer --group cuda-extensions)
-[dependency-groups]
-infer = [
-    "opencv-python-headless",
-    "imageio",
-    "imageio-ffmpeg",
-    "Pillow",
-    "scikit-image",
-    "trimesh",
-    "plyfile",
-    "open3d",
-    "pyrender",
-    "py360convert",
-    "kornia",
-    "timm",
-    "matplotlib",
-    "plotly",
-    "transformers",
-    "gradio>=5.0.0,<=6.0.1",
-    "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
-]
-cuda-extensions = [
-    "o_voxel",
-    "cumesh",
-    "flex_gemm",
-    "nvdiffrast",
-    "nvdiffrec",
-]
-dev = [
-    "tensorboard",
-    "lpips",
-]
+[tool.uv]
+default-groups = ["infer"]
 
 # uv-specific configuration: auto-fetch PyTorch CUDA 12.4 wheels instead of CPU-only PyPI
 [[tool.uv.index]]
@@ -134,19 +95,6 @@ explicit = true
 torch = { index = "pytorch-cu124" }
 torchvision = { index = "pytorch-cu124" }
 xformers = { index = "pytorch-cu124" }
-o_voxel = { path = "./o-voxel" }
-cumesh = { git = "https://github.com/JeffreyXiang/CuMesh.git" }
-flex_gemm = { git = "https://github.com/JeffreyXiang/FlexGEMM.git" }
-nvdiffrast = { git = "https://github.com/NVlabs/nvdiffrast.git", tag = "v0.4.0" }
-nvdiffrec = { git = "https://github.com/JeffreyXiang/nvdiffrec.git", branch = "renderutils" }
-
-# Provide torch and setuptools during isolated building of custom CUDA extensions
-[tool.uv.extra-build-dependencies]
-cumesh = ["torch", "setuptools"]
-flex_gemm = ["torch", "setuptools"]
-nvdiffrast = ["torch", "setuptools"]
-nvdiffrec = ["torch", "setuptools"]
-o_voxel = ["torch", "setuptools"]
 
 [tool.setuptools.packages.find]
 where = ["."]
