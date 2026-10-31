@@ -12,7 +12,10 @@ from . import samplers, rembg
 from ..modules.sparse import SparseTensor
 from ..modules import image_feature_extractor
 import o_voxel
-import cumesh
+try:
+    import cumesh
+except Exception:
+    cumesh = None
 import nvdiffrast.torch as dr
 import cv2
 import flex_gemm

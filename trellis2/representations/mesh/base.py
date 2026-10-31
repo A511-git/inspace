@@ -4,7 +4,10 @@
 from typing import *
 import torch
 from ..voxel import Voxel
-import cumesh
+try:
+    import cumesh
+except Exception as e:
+    cumesh = None
 from flex_gemm.ops.grid_sample import grid_sample_3d
 
 
@@ -36,6 +39,8 @@ class Mesh:
         return self.to('cpu')
     
     def fill_holes(self, max_hole_perimeter=3e-2):
+        if cumesh is None:
+            return
         vertices = self.vertices.cuda()
         faces = self.faces.cuda()
         
@@ -60,6 +65,8 @@ class Mesh:
         self.faces = new_faces.to(self.device)
         
     def remove_faces(self, face_mask: torch.Tensor):
+        if cumesh is None:
+            return
         vertices = self.vertices.cuda()
         faces = self.faces.cuda()
         
@@ -72,6 +79,8 @@ class Mesh:
         self.faces = new_faces.to(self.device)
         
     def simplify(self, target=1000000, verbose: bool=False, options: dict={}):
+        if cumesh is None:
+            return
         vertices = self.vertices.cuda()
         faces = self.faces.cuda()
         
