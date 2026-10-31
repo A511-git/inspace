@@ -84,6 +84,10 @@ explicit = true
 torch = { index = "pytorch-cu128" }
 torchvision = { index = "pytorch-cu128" }
 xformers = { index = "pytorch-cu128" }
+cumesh = { path = "wheels/cumesh-0.0.1-cp310-cp310-linux_x86_64.whl" }
+flex-gemm = { path = "wheels/flex_gemm-1.0.0-cp310-cp310-linux_x86_64.whl" }
+nvdiffrast = { path = "wheels/nvdiffrast-0.4.0-cp310-cp310-linux_x86_64.whl" }
+o-voxel = { path = "wheels/o_voxel-0.0.1-cp310-cp310-linux_x86_64.whl" }
 
 [tool.setuptools.packages.find]
 where = ["."]
