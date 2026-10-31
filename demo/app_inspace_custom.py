@@ -670,6 +670,8 @@ def on_load_input(room_key, view_id, data_dir, state):
         t0 = time.time()
         state = dict(state) if state else {}
 
+        if not room_key:
+            return (None, None, None, None, state, "", "Please select a room or upload custom data first.")
         parts = room_key.split('/', 1)
         scene_id, room_id = parts[0], parts[1]
         view_idx = int(view_id)
