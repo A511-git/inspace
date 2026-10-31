@@ -12,6 +12,9 @@ blender*
 tmp/
 microsoft/
 
+# Third party vendor files
+o-voxel/third_party/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

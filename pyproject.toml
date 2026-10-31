@@ -62,11 +62,11 @@ dependencies = [
     "utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8",
     "lpips",
 
-    # Precompiled CUDA Wheels (CUDA 12.8 from PozzettiAndrea/cuda-wheels)
-    "cumesh<0.0.1+cu130",
-    "flex-gemm<1.0.0+cu130",
-    "nvdiffrast<0.4.0+cu130",
-    "o-voxel<0.0.1+cu130",
+    # Custom CUDA Extensions (compiled with CUDA 12.8)
+    "cumesh",
+    "flex-gemm",
+    "nvdiffrast",
+    "o-voxel",
 ]
 
 [project.optional-dependencies]
@@ -80,20 +80,10 @@ name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
-# PozzettiAndrea precompiled CUDA wheels index
-[[tool.uv.index]]
-name = "cuda-wheels"
-url = "https://pozzettiandrea.github.io/cuda-wheels/"
-explicit = true
-
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
 torchvision = { index = "pytorch-cu128" }
 xformers = { index = "pytorch-cu128" }
-cumesh = { index = "cuda-wheels" }
-flex-gemm = { index = "cuda-wheels" }
-nvdiffrast = { index = "cuda-wheels" }
-o-voxel = { index = "cuda-wheels" }
 
 [tool.setuptools.packages.find]
 where = ["."]
