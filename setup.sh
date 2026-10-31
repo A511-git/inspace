@@ -77,7 +77,7 @@ if [ "$NEW_ENV" = true ] ; then
     conda create -n inspace python=3.10
     conda activate inspace
     if [ "$PLATFORM" = "cuda" ] ; then
-        pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+        pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
     elif [ "$PLATFORM" = "hip" ] ; then
         pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/rocm6.2.4
     fi
@@ -100,10 +100,9 @@ fi
 if [ "$PLATFORM" = "cuda" ] && [ -z "$CUDA_HOME" ]; then
     # echo "CUDA_HOME not set. Installing cuda-toolkit 12.4 via conda..." 
     # conda install -y cuda-toolkit=12.4 -c nvidia # Pulls the newest individual components from the nvidia channel, which can mix versions.
-    echo "CUDA_HOME not set. Installing CUDA 12.4 development tools via conda..."
-    # Install specific CUDA 12.4 components instead of full toolkit to avoid version conflicts
-    # The nvidia/label/cuda-12.4.1 channel pins components to exactly CUDA 12.4
-    conda install -y -c nvidia/label/cuda-12.4.0 cuda-nvcc cuda-cudart-dev cuda-toolkit=12.4.0
+    echo "CUDA_HOME not set. Installing CUDA 12.8 development tools via conda..."
+    # Install specific CUDA 12.8 components instead of full toolkit to avoid version conflicts
+    conda install -y -c nvidia/label/cuda-12.8.0 cuda-nvcc cuda-cudart-dev cuda-toolkit=12.8.0
     export CUDA_HOME=$CONDA_PREFIX
     echo "CUDA_HOME set to: $CUDA_HOME"
 fi

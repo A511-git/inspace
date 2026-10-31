@@ -1,11 +1,11 @@
-# PyTorch CUDA 12.4 + PozzettiAndrea CUDA Wheels + PyPI
---index-url https://download.pytorch.org/whl/cu124
+# PyTorch CUDA 12.8 + PozzettiAndrea CUDA Wheels + PyPI
+--index-url https://download.pytorch.org/whl/cu128
 --extra-index-url https://pozzettiandrea.github.io/cuda-wheels/
 --extra-index-url https://pypi.org/simple
 
 # Core PyTorch stack
-torch==2.6.0
-torchvision==0.21.0
+torch
+torchvision
 xformers
 
 # Build tools & numerical utilities
@@ -43,8 +43,8 @@ lpips
 # 3D Utilities
 utils3d @ git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 
-# Pre-compiled CUDA extensions for Linux
-cumesh
-flex-gemm
-nvdiffrast
-o-voxel
+# Pre-compiled CUDA extensions for Linux (CUDA 12.8)
+cumesh<0.0.1+cu130
+flex-gemm<1.0.0+cu130
+nvdiffrast<0.4.0+cu130
+o-voxel<0.0.1+cu130

@@ -105,11 +105,11 @@ The four trainable components correspond to the four released checkpoints (see
 
 ## 🛠️ Installation
 
-InSpace uses the **same environment as TRELLIS.2** (PyTorch 2.6 / CUDA 12.4 recommended).
+InSpace uses the **same environment as TRELLIS.2** (CUDA 12.8 recommended).
 
 ### Prerequisites
 - **OS:** Linux. **GPU:** NVIDIA with at least 24 GB VRAM (tested on A100 / H100).
-- [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) 12.4, [Conda](https://docs.anaconda.com/miniconda/), Python 3.8 or newer.
+- [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) 12.8, [Conda](https://docs.anaconda.com/miniconda/), Python 3.10 or newer.
 
 ### Steps
 ```sh

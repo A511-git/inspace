@@ -24,28 +24,6 @@ import argparse
 import traceback
 from tqdm import tqdm
 
-# Auto-symlink libcudart.so.13 -> libcudart.so.12 for precompiled CUDA 13 wheels on CUDA 12 systems
-try:
-    import glob
-    _candidates = (
-        glob.glob(os.path.join(sys.prefix, '**', 'libcudart.so.12*'), recursive=True) +
-        glob.glob('/usr/local/cuda*/lib64/libcudart.so*') +
-        glob.glob('/usr/lib*/**/libcudart.so*', recursive=True)
-    )
-    for _src in _candidates:
-        if os.path.isfile(_src) and not os.path.islink(_src):
-            for _dst_dir in ['/usr/lib/x86_64-linux-gnu', os.path.dirname(_src)]:
-                _dst = os.path.join(_dst_dir, 'libcudart.so.13')
-                if not os.path.exists(_dst):
-                    try:
-                        os.symlink(_src, _dst)
-                        print(f"[Init] CUDA 13 compatibility symlink created: {_dst} -> {_src}")
-                    except Exception:
-                        pass
-            break
-except Exception:
-    pass
-
 # Select the GPU before importing torch (must be set before the first torch import).
 # Defaults to GPU 1; override from the shell, e.g.
 #   CUDA_VISIBLE_DEVICES=0 python demo/app_inspace_custom.py
