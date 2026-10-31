@@ -242,23 +242,47 @@ def load_cubemap_images(data_dir, scene_id, room_id, view_idx=0, image_size=512)
 
 
 def load_camera_center(data_dir, scene_id, room_id, view_idx=0):
-    """Load and normalize camera center from camera_poses.json + normalization_info.json."""
+    """Load and normalize camera center from camera_poses.json + normalization_info.json, with fallback for custom data."""
     sample_dir = os.path.join(data_dir, scene_id, room_id)
 
-    with open(os.path.join(sample_dir, 'camera_poses.json'), 'r') as f:
-        camera_data = json.load(f)
-    cam_location = camera_data['views'][view_idx]['location']
+    poses_path = os.path.join(sample_dir, 'camera_poses.json')
+    if os.path.exists(poses_path):
+        try:
+            with open(poses_path, 'r') as f:
+                camera_data = json.load(f)
+            views = camera_data.get('views', [])
+            if view_idx < len(views) and 'location' in views[view_idx]:
+                cam_location = views[view_idx]['location']
 
-    norm_info_path = os.path.join(sample_dir, 'mesh_dumps', 'normalization_info.json')
-    if not os.path.exists(norm_info_path):
-        norm_info_path = os.path.join(sample_dir, 'dual_grid_512', 'normalization_info.json')
-    with open(norm_info_path, 'r') as f:
-        norm_info = json.load(f)
+                norm_info_path = os.path.join(sample_dir, 'mesh_dumps', 'normalization_info.json')
+                if not os.path.exists(norm_info_path):
+                    norm_info_path = os.path.join(sample_dir, 'dual_grid_512', 'normalization_info.json')
+                if not os.path.exists(norm_info_path):
+                    norm_info_path = os.path.join(sample_dir, 'depth_voxels_da2_64', 'normalization_info.json')
 
-    center = np.array(norm_info['center'])
-    scale = norm_info['scale']
-    cam_normalized = (np.array(cam_location) - center) * scale
-    return torch.from_numpy(cam_normalized).float()
+                if os.path.exists(norm_info_path):
+                    with open(norm_info_path, 'r') as f:
+                        norm_info = json.load(f)
+                    center = np.array(norm_info['center'])
+                    scale = norm_info['scale']
+                    cam_normalized = (np.array(cam_location) - center) * scale
+                    return torch.from_numpy(cam_normalized).float()
+        except Exception as e:
+            log(f"[load_camera_center] Warning loading camera pose: {e}")
+
+    # Check depth_voxels_da2_64/normalization_info.json (pre-saved custom data)
+    da2_norm_path = os.path.join(sample_dir, 'depth_voxels_da2_64', 'normalization_info.json')
+    if os.path.exists(da2_norm_path):
+        try:
+            with open(da2_norm_path, 'r') as f:
+                norm_info = json.load(f)
+            if 'camera_center' in norm_info:
+                return torch.tensor(norm_info['camera_center'], dtype=torch.float32)
+        except Exception:
+            pass
+
+    # Fallback for custom uploaded panorama without pre-saved metadata: panorama camera is at the origin
+    return torch.tensor([0.0, 0.0, 0.0], dtype=torch.float32)
 
 
 def load_gt_bboxes(data_dir, scene_id, room_id):

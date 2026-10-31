@@ -1106,11 +1106,23 @@ def on_generate_csg(room_key, view_id, data_dir,
         scene_id, room_id = parts[0], parts[1]
         view_idx = int(view_id)
 
+        da2_data = state.get('da2_data')
+        if da2_data is not None and not da2_data.get('is_normalized', False):
+            log("[Stage 1] DA2 data not normalized yet. Auto-normalizing...")
+            try:
+                if not da2_data.get('is_cropped', False):
+                    da2_data = crop_da2_point_cloud(da2_data)
+                da2_data = normalize_da2_point_cloud(da2_data)
+                if da2_data is not None:
+                    state['da2_data'] = da2_data
+                    log(f"[Stage 1] Auto-normalized: camera_center={da2_data.get('camera_center')}")
+            except Exception as e:
+                log(f"[Stage 1] Auto-normalization failed: {e}")
+
         # SDEdit latent (custom data has no pre-saved latent): compute inline from the
         # normalized DA2 point cloud produced in the "DA2 Point Cloud" tab.
         psg_ss_latent = None
         if use_sdedit:
-            da2_data = state.get('da2_data')
             if da2_data is not None and da2_data.get('is_normalized', False):
                 log("[Stage 1] Computing SDEdit latent inline from DA2 point cloud...")
                 psg_ss_latent, _ = compute_sdedit_initial_latent(da2_data)
@@ -1121,13 +1133,14 @@ def on_generate_csg(room_key, view_id, data_dir,
                 else:
                     log("[Stage 1] Inline computation failed, falling back to random noise")
             else:
-                log("[Stage 1] DA2 data not normalized. Please run Normalize first. Falling back to random noise")
+                log("[Stage 1] DA2 data not normalized. Falling back to random noise")
 
         # Get camera_center from DA2 normalization (no camera_poses.json for custom data)
-        da2_data = state.get('da2_data')
         cam_center_for_stage1 = None
         if da2_data is not None and da2_data.get('is_normalized', False):
             cam_center_for_stage1 = da2_data['camera_center']
+        else:
+            cam_center_for_stage1 = np.array([0.0, 0.0, 0.0], dtype=np.float32)
 
         result = run_stage1_single(
             data_dir, scene_id, room_id, view_idx=view_idx,
