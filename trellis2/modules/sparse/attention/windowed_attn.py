@@ -113,7 +113,7 @@ def sparse_windowed_scaled_dot_product_self_attention(
         v = v.unsqueeze(0)                                                              # [1, M, H, C]
         try:
             out = xops.memory_efficient_attention(q, k, v, **attn_func_args)[0]             # [M, H, C]
-        except NotImplementedError:
+        except (NotImplementedError, ValueError, RuntimeError):
             from torch.nn.functional import scaled_dot_product_attention as sdpa
             outputs = []
             offset = 0
@@ -197,7 +197,7 @@ def sparse_windowed_scaled_dot_product_cross_attention(
         mask = xops.fmha.BlockDiagonalMask.from_seqlens(q_seq_lens, kv_seq_lens)
         try:
             out = xops.memory_efficient_attention(q, k, v, attn_bias=mask)[0]               # [M, H, C]
-        except NotImplementedError:
+        except (NotImplementedError, ValueError, RuntimeError):
             from torch.nn.functional import scaled_dot_product_attention as sdpa
             outputs = []
             q_offset = 0

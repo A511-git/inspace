@@ -125,12 +125,16 @@ def scaled_dot_product_attention(*args, **kwargs):
         try:
             if attn_mask is not None:
                 if attn_mask.dim() == 3:  # [N, L_q, L_kv]
-                    attn_mask = attn_mask.unsqueeze(1)  # [N, 1, L_q, L_kv]
-                out = xops.memory_efficient_attention(q, k, v, attn_bias=attn_mask.to(q.dtype))
+                    attn_bias = attn_mask.unsqueeze(1).expand(-1, q.shape[2], -1, -1).contiguous()
+                elif attn_mask.dim() == 4 and attn_mask.shape[1] == 1:
+                    attn_bias = attn_mask.expand(-1, q.shape[2], -1, -1).contiguous()
+                else:
+                    attn_bias = attn_mask
+                out = xops.memory_efficient_attention(q, k, v, attn_bias=attn_bias.to(q.dtype))
             else:
                 out = xops.memory_efficient_attention(q, k, v)
-        except NotImplementedError:
-            # Fallback to PyTorch native SDPA if xformers has no kernel for this GPU/dtype
+        except (NotImplementedError, ValueError, RuntimeError):
+            # Fallback to PyTorch native SDPA if xformers has no kernel or rejects input shape/dtype
             # (e.g. bfloat16 on Tesla T4 / Turing sm75)
             from torch.nn.functional import scaled_dot_product_attention as sdpa
             q_sdpa = q.permute(0, 2, 1, 3)

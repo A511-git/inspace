@@ -235,7 +235,7 @@ def sparse_scaled_dot_product_attention(*args, **kwargs):
         mask = xops.fmha.BlockDiagonalMask.from_seqlens(q_seqlen, kv_seqlen)
         try:
             out = xops.memory_efficient_attention(q, k, v, mask)[0]
-        except NotImplementedError:
+        except (NotImplementedError, ValueError, RuntimeError):
             from torch.nn.functional import scaled_dot_product_attention as sdpa
             outputs = []
             q_offset = 0
