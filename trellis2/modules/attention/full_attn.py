@@ -122,12 +122,27 @@ def scaled_dot_product_attention(*args, **kwargs):
         elif num_all_args == 2:
             k, v = kv.unbind(dim=2)
         # xformers expects attn_bias in [B, H, L_q, L_kv] or broadcastable
-        if attn_mask is not None:
-            if attn_mask.dim() == 3:  # [N, L_q, L_kv]
-                attn_mask = attn_mask.unsqueeze(1)  # [N, 1, L_q, L_kv]
-            out = xops.memory_efficient_attention(q, k, v, attn_bias=attn_mask.to(q.dtype))
-        else:
-            out = xops.memory_efficient_attention(q, k, v)
+        try:
+            if attn_mask is not None:
+                if attn_mask.dim() == 3:  # [N, L_q, L_kv]
+                    attn_mask = attn_mask.unsqueeze(1)  # [N, 1, L_q, L_kv]
+                out = xops.memory_efficient_attention(q, k, v, attn_bias=attn_mask.to(q.dtype))
+            else:
+                out = xops.memory_efficient_attention(q, k, v)
+        except NotImplementedError:
+            # Fallback to PyTorch native SDPA if xformers has no kernel for this GPU/dtype
+            # (e.g. bfloat16 on Tesla T4 / Turing sm75)
+            from torch.nn.functional import scaled_dot_product_attention as sdpa
+            q_sdpa = q.permute(0, 2, 1, 3)
+            k_sdpa = k.permute(0, 2, 1, 3)
+            v_sdpa = v.permute(0, 2, 1, 3)
+            if attn_mask is not None:
+                if attn_mask.dim() == 3:
+                    attn_mask = attn_mask.unsqueeze(1)
+                out = sdpa(q_sdpa, k_sdpa, v_sdpa, attn_mask=attn_mask.to(q.dtype))
+            else:
+                out = sdpa(q_sdpa, k_sdpa, v_sdpa)
+            out = out.permute(0, 2, 1, 3)
     elif config.BACKEND == 'flash_attn':
         if 'flash_attn' not in globals():
             import flash_attn

@@ -111,7 +111,23 @@ def sparse_windowed_scaled_dot_product_self_attention(
         q = q.unsqueeze(0)                                                              # [1, M, H, C]
         k = k.unsqueeze(0)                                                              # [1, M, H, C]
         v = v.unsqueeze(0)                                                              # [1, M, H, C]
-        out = xops.memory_efficient_attention(q, k, v, **attn_func_args)[0]             # [M, H, C]
+        try:
+            out = xops.memory_efficient_attention(q, k, v, **attn_func_args)[0]             # [M, H, C]
+        except NotImplementedError:
+            from torch.nn.functional import scaled_dot_product_attention as sdpa
+            outputs = []
+            offset = 0
+            q_s = q.squeeze(0)
+            k_s = k.squeeze(0)
+            v_s = v.squeeze(0)
+            for slen in seq_lens:
+                q_i = q_s[offset:offset+slen].permute(1, 0, 2).unsqueeze(0)
+                k_i = k_s[offset:offset+slen].permute(1, 0, 2).unsqueeze(0)
+                v_i = v_s[offset:offset+slen].permute(1, 0, 2).unsqueeze(0)
+                out_i = sdpa(q_i, k_i, v_i)
+                outputs.append(out_i.squeeze(0).permute(1, 0, 2))
+                offset += slen
+            out = torch.cat(outputs, dim=0)
     elif config.ATTN == 'flash_attn':
         if 'flash_attn' not in globals():
             import flash_attn
@@ -179,7 +195,25 @@ def sparse_windowed_scaled_dot_product_cross_attention(
         k = k.unsqueeze(0)                                                              # [1, M, H, C]
         v = v.unsqueeze(0)                                                              # [1, M, H, C]
         mask = xops.fmha.BlockDiagonalMask.from_seqlens(q_seq_lens, kv_seq_lens)
-        out = xops.memory_efficient_attention(q, k, v, attn_bias=mask)[0]               # [M, H, C]
+        try:
+            out = xops.memory_efficient_attention(q, k, v, attn_bias=mask)[0]               # [M, H, C]
+        except NotImplementedError:
+            from torch.nn.functional import scaled_dot_product_attention as sdpa
+            outputs = []
+            q_offset = 0
+            kv_offset = 0
+            q_s = q.squeeze(0)
+            k_s = k.squeeze(0)
+            v_s = v.squeeze(0)
+            for qlen, kvlen in zip(q_seq_lens, kv_seq_lens):
+                q_i = q_s[q_offset:q_offset+qlen].permute(1, 0, 2).unsqueeze(0)
+                k_i = k_s[kv_offset:kv_offset+kvlen].permute(1, 0, 2).unsqueeze(0)
+                v_i = v_s[kv_offset:kv_offset+kvlen].permute(1, 0, 2).unsqueeze(0)
+                out_i = sdpa(q_i, k_i, v_i)
+                outputs.append(out_i.squeeze(0).permute(1, 0, 2))
+                q_offset += qlen
+                kv_offset += kvlen
+            out = torch.cat(outputs, dim=0)
     elif config.ATTN == 'flash_attn':
         if 'flash_attn' not in globals():
             import flash_attn

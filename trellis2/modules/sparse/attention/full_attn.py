@@ -233,7 +233,27 @@ def sparse_scaled_dot_product_attention(*args, **kwargs):
         k = k.unsqueeze(0)
         v = v.unsqueeze(0)
         mask = xops.fmha.BlockDiagonalMask.from_seqlens(q_seqlen, kv_seqlen)
-        out = xops.memory_efficient_attention(q, k, v, mask)[0]
+        try:
+            out = xops.memory_efficient_attention(q, k, v, mask)[0]
+        except NotImplementedError:
+            from torch.nn.functional import scaled_dot_product_attention as sdpa
+            outputs = []
+            q_offset = 0
+            kv_offset = 0
+            q_s = q.squeeze(0)
+            k_s = k.squeeze(0)
+            v_s = v.squeeze(0)
+            for i in range(len(q_seqlen)):
+                nq = q_seqlen[i]
+                nkv = kv_seqlen[i]
+                q_t = q_s[q_offset:q_offset+nq].permute(1, 0, 2).unsqueeze(0)
+                k_t = k_s[kv_offset:kv_offset+nkv].permute(1, 0, 2).unsqueeze(0)
+                v_t = v_s[kv_offset:kv_offset+nkv].permute(1, 0, 2).unsqueeze(0)
+                out_g = sdpa(q_t, k_t, v_t)
+                outputs.append(out_g.squeeze(0).permute(1, 0, 2))
+                q_offset += nq
+                kv_offset += nkv
+            out = torch.cat(outputs, dim=0)
     elif config.ATTN == 'flash_attn':
         if 'flash_attn' not in globals():
             import flash_attn
